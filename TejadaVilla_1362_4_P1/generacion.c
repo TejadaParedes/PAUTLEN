@@ -22,6 +22,7 @@ void declarar_variable(FILE* fpasm, char * nombre, int tipo, int tamano){
         return;
     }
     else{
+      /* fprintf(fpasm, "\t_%s resd %d\n", nombre, tamano);*/
       fprintf(fpasm, "\t_%s%d resd %d\n", nombre, tamano, tamano);
       return;
     }
@@ -402,7 +403,7 @@ void escribir_elemento_vector(FILE* fpasm, char* nombre, int tamanio, int es_var
   }
   
   fprintf(fpasm, "\tcmp eax, 0\n\tjl near error_indice_vector\n\tcmp eax, %d-1\n\tjg near error_indice_vector\n\tmov dword edx, _%s%d\n", tamanio, nombre, tamanio);
-
+  /*fprintf(fpasm, "\tcmp eax, 0\n\tjl near error_indice_vector\n\tcmp eax, %d-1\n\tjg near error_indice_vector\n\tmov dword edx, _%s\n", tamanio, nombre);*/
   fprintf(fpasm, "\tlea eax, [edx + eax*4]\n\tpush dword eax\n");
 
   return;

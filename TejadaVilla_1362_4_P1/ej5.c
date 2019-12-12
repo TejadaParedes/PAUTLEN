@@ -47,7 +47,8 @@ int main (int argc, char ** argv)
     multiplicar(fd_asm,1,0);
     escribir_operando(fd_asm,"m",1);
     escribir_elemento_vector(fd_asm,"v", 4, 1);
-    asignarDestinoEnPila(fd_asm,0);
+    asignar(fd_asm,"v4",0);
+    /* asignarDestinoEnPila(fd_asm,0);*/
     /*m = m + 1*/
     escribir_operando(fd_asm,"m",1);
     escribir_operando(fd_asm,"1",0);
