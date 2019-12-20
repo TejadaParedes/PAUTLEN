@@ -3,6 +3,10 @@
 #define MAX_LONG_ID 100
 #define MAX_TAMANIO_VECTOR 64
 
+#include "tablaHash.h"
+#include "tablaSimbolos.h"
+#include "generacion.h"
+
 typedef struct{
     char lexema[MAX_LONG_ID+1];
     int tipo;

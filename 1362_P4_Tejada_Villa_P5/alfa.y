@@ -1,7 +1,8 @@
 %{
 
 #include <stdio.h>
-#include <stdlib.h>    
+#include <string.h> 
+#include "alfa.h"   
 
 extern int yylex();
 extern int yyparse();
@@ -11,13 +12,31 @@ extern int n_linea;
 extern int n_columna;
 extern int error;
 
+TIPO tipo;
+CLASE clase;
+int tam_vector;
+INFO_SIMBOLO *is;
+INFO_SIMBOLO is_aux;
+
+int num_no = 0;
+int num_cmp = 0;
+int num_cond = 0;
+int num_loops = 0;
+int idx_variable_local = 0;
+int num_local_variables = 0;
+int num_parametros = 0;
+int idx_parametro = 0;
+int is_function = 0;
+int is_call_function = 0;
+int parametros = 0;
+int existe_return = 0;
+
 void yyerror(const char* s);
 
 %}
 
 %union{
-    char cadena[1000];
-    int numero;
+    TIPO_ATRIBUTOS atributos;
 }
 
 %token TOK_MAIN
@@ -58,10 +77,23 @@ void yyerror(const char* s);
 
 %token TOK_TRUE
 %token TOK_FALSE
-%token TOK_CONSTANTE_ENTERA
-%token TOK_IDENTIFICADOR
+%token <atributos> TOK_CONSTANTE_ENTERA
+%token <atributos> TOK_IDENTIFICADOR
 
 %token TOK_ERROR
+
+%type <atributos> constante_entera
+%type <atributos> constante_logica
+%type <atributos> constante
+%type <atributos> exp
+%type <atributos> if_statement
+%type <atributos> if_statement_sentencias
+%type <atributos> while_star
+%type <atributos> while_end
+%type <atributos> elemento_vector
+%type <atributos> funct_name 
+%type <atributos> funct_name_params
+%type <atributos> funct_call_star
 
 %left TOK_MAS TOK_MENOS TOK_OR
 %left TOK_ASTERISCO TOK_DIVISION TOK_AND
@@ -92,7 +124,13 @@ tipo: TOK_INT {fprintf(yyout, ";R10:\t<tipo> ::= int\n");}
     | TOK_BOOLEAN {fprintf(yyout, ";R11:\t<tipo> ::= boolean\n");}
 ;
 
-clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO {fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");}
+clase_vector: TOK_ARRAY tipo TOK_CORCHETEIZQUIERDO constante_entera TOK_CORCHETEDERECHO {
+    tam_vector = $4.valor_entero;
+    if(tam_vector < 1 || tam_vector > MAX_TAMANIO_VECTOR){
+        fprintf(stderr, "****Error semantico en linea %d: El tamanyo del vector %s excede los limites permitidos (1,64).\n", n_linea, $4.lexema);
+        return -1;
+    }
+    fprintf(yyout, ";R15:\t<clase_vector> ::= array <tipo> [ <constante_entera> ]\n");}
 ;
 
 identificadores: identificador {fprintf(yyout, ";R18:\t<identificadores> ::= <identificador>\n");}
@@ -103,7 +141,51 @@ funciones: funcion funciones {fprintf(yyout, ";R20:\t<funciones> ::= <funcion> <
     | {fprintf(yyout, ";R21:\t<funciones> ::=\n");}
 ;
 
-funcion: TOK_FUNCTION tipo identificador TOK_PARENTESISIZQUIERDO parametros_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ){ <declaracion_funcion> <sentencias> }\n");}
+funct_name: TOK_FUNCTION tipo TOK_IDENTIFICADOR{
+    existe_return = 0;
+    is_function = 1;
+    is = BuscarSimbolo($3.lexema);
+    if(!is){
+        fprintf(stderr, "****Error semantico en la linea %d: Declaracion duplicada.", n_linea);
+        return -1;
+    }
+    is_aux.lexema = $3.lexema;
+    is_aux.categoria = FUNCTION;
+    is_aux.tipo = tipo;
+    is_aux.clase = ESCALAR;
+
+    strcpy($$.lexema, $3.lexema);
+    $$.tipo = tipo;
+
+    declararFuncion($3.lexema, &is_aux);
+    idx_variable_local = 0;
+    num_local_variables = 0;
+    idx_parametro = 0;
+    num_parametros = 0;
+}
+
+funct_name_params: funct_name TOK_PARENTESISIZQUIERDO parametro_funcion TOK_PARENTESISDERECHO TOK_LLAVEIZQUIERDA declaraciones_funcion{
+
+    is = BuscarSimbolo($3.lexema);
+    if(!is){
+        fprintf(stderr, "****Error semantico en la linea %d: Declaracion duplicada.", n_linea);
+        return -1;
+    }
+    is->adicional1 = num_parametros;
+    strcpy($$.lexema, $1.lexema);
+    $$.tipo = $1.tipo;
+    declararFuncion(yyout, $1.lexema, num_local_variables);
+}
+
+funcion: funct_name_params sentencias TOK_LLAVEDERECHA {
+
+    if(!existe_return){
+        fprintf(stderr, "****Error semantico en lin %d: Funcion %s sin sentencia de retorno.", n_linea, $1.lexema);
+        return -1;
+    }
+    cerrarFuncion();
+    retornarFuncion() ----
+    fprintf(yyout, ";R22:\t<funcion> ::= function <tipo> <identificador> ( <parametros_funcion> ){ <declaracion_funcion> <sentencias> }\n");}
 ;
 
 parametros_funcion: parametro_funcion resto_parametros_funcion {fprintf(yyout, ";R23:\t<parametros_funcion> ::= <parametro_funcion> <resto_parametros_funcion>\n");}
