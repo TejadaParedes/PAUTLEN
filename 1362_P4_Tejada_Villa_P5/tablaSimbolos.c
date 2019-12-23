@@ -97,7 +97,7 @@ STATUS cerrarFuncion() {
     return OK;
 }
 
-int es_local(const char *id){
+int EsLocal(const char *id){
 
     if(!TablaSimbolosLocal) return 0;
 

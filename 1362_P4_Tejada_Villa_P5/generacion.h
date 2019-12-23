@@ -157,11 +157,18 @@ void ifthenelse_inicio(FILE * fpasm, int exp_es_variable, int etiqueta);
 void ifthenelse_fin_then( FILE * fpasm, int etiqueta);
 void ifthenelse_fin( FILE * fpasm, int etiqueta);
 
-void declararFuncion(FILE * fd_asm, char * nombre_funcion, int num_var_loc);
+void declarar_Funcion(FILE * fd_asm, char * nombre_funcion, int num_var_loc);
 void retornarFuncion(FILE * fd_asm, int es_variable);
 void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros);
 void escribirVariableLocal(FILE* fpasm, int posicion_variable_local);
 void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable);
 void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos);
 void limpiarPila(FILE * fd_asm, int num_argumentos);
+
+
+void funcionFin(FILE *fpasm);
+void asignar_local(FILE * fd_asm, int n_local, int inmediato);
+void asignar_vector(FILE * fd_asm, int inmediato);
+void escribir_operando_funcion(FILE * fd_asm, int n);
+void cambiar_a_valor(FILE *fd_asm);
 #endif

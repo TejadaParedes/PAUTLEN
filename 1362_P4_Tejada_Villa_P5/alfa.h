@@ -1,5 +1,5 @@
-#ifndef _ALFA_H
-#define _ALFA_H
+#ifndef _ALFA_H_
+#define _ALFA_H_
 #define MAX_LONG_ID 100
 #define MAX_TAMANIO_VECTOR 64
 

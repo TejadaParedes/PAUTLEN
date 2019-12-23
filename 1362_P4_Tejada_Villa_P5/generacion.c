@@ -75,7 +75,7 @@ void asignar(FILE* fpasm, char* nombre, int es_variable){
 
     if(es_variable){
 
-        fprintf(fpasm, "\tmov dword eax, eax\n");
+        fprintf(fpasm, "\tmov dword eax, [eax]\n");
 
     }
     
@@ -471,7 +471,7 @@ void ifthen_fin(FILE * fpasm, int etiqueta){
   return;
 }
 
-void declararFuncion(FILE * fd_asm, char * nombre_funcion, int num_var_loc){
+void declarar_Funcion(FILE * fd_asm, char * nombre_funcion, int num_var_loc){
 
   fprintf(fd_asm, "_%s:\n\tpush ebp\n\tmov ebp, esp\n\tsub esp, 4*%d\n", nombre_funcion, num_var_loc);
 
@@ -485,8 +485,9 @@ void retornarFuncion(FILE * fd_asm, int es_variable){
     fprintf(fd_asm, "\tmov dword eax, [eax]\n");
   }
 
-  fprintf(fd_asm, "\tmov esp,ebp\n\tpop ebp\n\tret\n");
+  fprintf(fd_asm, "\tmov esp, ebp\n\tpop ebp\n\tret\n");
 }
+
 void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros){
 
   int d_ebp;
@@ -496,6 +497,7 @@ void escribirParametro(FILE* fpasm, int pos_parametro, int num_total_parametros)
 
   return;
 }
+
 void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 
   int d_ebp;
@@ -505,6 +507,7 @@ void escribirVariableLocal(FILE* fpasm, int posicion_variable_local){
 
   return;
 }
+
 void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
 
   fprintf(fd_asm, "\tpop eax\n");
@@ -517,13 +520,55 @@ void operandoEnPilaAArgumento(FILE * fd_asm, int es_variable){
 
   return;
 }
+
 void llamarFuncion(FILE * fd_asm, char * nombre_funcion, int num_argumentos){
 
   fprintf(fd_asm, "\tcall _%s\n\tadd esp, %d*4\n\tpush dword eax\n", nombre_funcion, num_argumentos);
 
   return;
 }
+
 void limpiarPila(FILE * fd_asm, int num_argumentos){
 
   fprintf(fd_asm, "\tadd esp, 4*%d\n", num_argumentos);
+  
+  return;
+}
+
+void funcionFin(FILE * fd_asm){
+
+  fprintf(fd_asm, "\tmove eax, 0\n\tmov esp, ebp\n\tpop ebp\n\tret\n");
+
+  return;
+}
+
+void asignar_local(FILE * fd_asm, int n_local, int inmediato){
+
+  fprintf(fd_asm,"\tpop dword eax\n");
+
+  if(!inmediato) fprintf(fd_asm,"\tmov dword [ebp+%d], eax\n", n_local);
+  else fprintf(fd_asm,"\tmov dword [ebp+%d], [eax]\n", n_local);
+
+  return;
+}
+
+void asignar_vector(FILE * fd_asm, int inmediato){
+
+  fprintf(fd_asm, "\tpop dword eax\n");
+
+  if(!inmediato) printf("\tmov eax, [eax]\n");
+
+  fprintf(fd_asm, "\tpop dword edx\n\tmov [edx], eax\n");
+
+  return;
+}
+
+void escribir_operando_funcion(FILE * fd_asm, int n){
+  fprintf(fd_asm,"\tmov dword eax, ebp\n\tadd eax, %d\n\tpush dword eax\n", n*4);
+  return;
+}
+
+void cambiar_a_valor(FILE *fd_asm){
+  fprintf(fd_asm, "\tpop dword eax\n\tpush dword [eax]\n");
+  return;
 }

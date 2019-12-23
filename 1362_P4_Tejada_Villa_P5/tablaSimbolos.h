@@ -5,7 +5,7 @@
 
 #define TABLA_SIMBOLOS_GLOBAL_TAM       65536
 #define TABLA_SIMBOLOS_LOCAL_TAM        65536
-#define BuscarSimbolo                   UsoLocal
+#define BuscarSimbolo                   usoLocal
 
 /*SOLO PARA EL MODO EXTENDIDO CON VARIAS TABLAS DE SIMBOLOS LOCALES (FUNCIONES ANIDADAS)*/
 #define TABLA_SIMBOLOS_LOCAL_NIVELES    5
@@ -26,7 +26,7 @@ INFO_SIMBOLO *usoGlobal(const char* id);
 INFO_SIMBOLO *usoLocal(const char* id);
 STATUS declararFuncion(const char* id, INFO_SIMBOLO *is);
 STATUS cerrarFuncion();
-int es_local(const char *id);
+int EsLocal(const char *id);
 void terminar();
 
 #endif /* TABLASIMBOLOS_H */
