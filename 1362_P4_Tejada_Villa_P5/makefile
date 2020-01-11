@@ -3,15 +3,12 @@ FLAGS = -Wall -ansi
 BS = bison
 BFLAGS = -d -y -v
 FX = flex
-OBJ = alfa.o tablaSimbolos.o tablaHash.o generacion.o y.tab.o lex.yy.o
+OBJ = tablaSimbolos.o tablaHash.o generacion.o y.tab.o lex.yy.o
 
 all: alfa
 
 alfa: $(OBJ)
-	$(CC) -o alfa $(OBJ)
- 
-alfa.o: alfa.c y.tab.h alfa.h
-	$(CC) $(FLAGS) -c alfa.c
+	$(CC) -g -o alfa alfa.c $(OBJ)
 
 tablaSimbolos.o: tablaSimbolos.c tablaSimbolos.h
 	$(CC) $(FLAGS) -c tablaSimbolos.c
@@ -35,4 +32,4 @@ lex.yy.c: alfa.l y.tab.h
 	$(FX) alfa.l
 
 clean:
-	rm -rf alfa $(OBJ) lex.yy.c y.tab.h y.tab.c
+	rm -rf alfa $(OBJ) lex.yy.c y.tab.h y.tab.c y.output

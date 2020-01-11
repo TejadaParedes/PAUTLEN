@@ -102,6 +102,7 @@ int existe_return = 0;
 %union{
     TIPO_ATRIBUTOS atributos;
 }
+%start programa
 %%
 
 programa: TOK_MAIN TOK_LLAVEIZQUIERDA declaraciones escribirTabla funciones escribirMain sentencias TOK_LLAVEDERECHA {fprintf(yyout, ";R1:\t<programa> ::= main { <declaraciones> <funciones> <sentencias> }\n");}

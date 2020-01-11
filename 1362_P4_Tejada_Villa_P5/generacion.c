@@ -10,7 +10,7 @@ void escribir_cabecera_bss(FILE* fpasm){
 
 void escribir_subseccion_data(FILE* fpasm){
 
-    fprintf(fpasm, "segment .data\n\t_errordivision db \"Estas inetntando dividir un numero entre 0\", 0\n\t_error_indice_vector db \"Indice de vector fuera de rango\", 0\n");
+    fprintf(fpasm, "segment .data\n\t_errordivision db \"****Error de ejecucion: Division por cero.\", 0\n\t_error_indice_vector db \"****Error de ejecucion: Indice fuera de rango.\", 0\n");
 
     return;
 }
